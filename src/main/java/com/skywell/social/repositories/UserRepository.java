@@ -1,5 +1,6 @@
-package com.skywell.social.custom;
+package com.skywell.social.repositories;
 
+import com.skywell.social.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

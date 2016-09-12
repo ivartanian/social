@@ -1,5 +1,6 @@
-package com.skywell.social.temp;
+package com.skywell.social.service;
 
+import com.skywell.social.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.social.connect.ConnectionKey;
 import org.springframework.social.security.SocialUserDetailsService;

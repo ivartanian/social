@@ -1,5 +1,6 @@
-package com.skywell.social.temp;
+package com.skywell.social.entity;
 
+import com.skywell.social.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 

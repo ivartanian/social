@@ -26,10 +26,7 @@ import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
 import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.config.annotation.SocialConfigurerAdapter;
-import org.springframework.social.connect.Connection;
-import org.springframework.social.connect.ConnectionFactoryLocator;
-import org.springframework.social.connect.ConnectionRepository;
-import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.connect.*;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
@@ -48,10 +45,12 @@ import javax.sql.DataSource;
 public class SocialConfig extends SocialConfigurerAdapter {
 
     private final DataSource dataSource;
+    private final ConnectionSignUp connectionSignUp;
 
     @Autowired
-    public SocialConfig(DataSource dataSource) {
+    public SocialConfig(DataSource dataSource, ConnectionSignUp connectionSignUp) {
         this.dataSource = dataSource;
+        this.connectionSignUp = connectionSignUp;
     }
 
     @Override
@@ -66,7 +65,9 @@ public class SocialConfig extends SocialConfigurerAdapter {
 
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
-        return new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator, Encryptors.noOpText());
+        JdbcUsersConnectionRepository repository = new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator, Encryptors.noOpText());
+        repository.setConnectionSignUp(connectionSignUp);
+        return repository;
     }
 
     @Bean

@@ -16,22 +16,32 @@
 package com.skywell.social.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 /**
  * Main configuration class for the application.
@@ -41,10 +51,18 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "com.skywell.social", excludeFilters = {@ComponentScan.Filter(Configuration.class)})
 @PropertySource("classpath:persistence.properties")
+@EnableTransactionManagement
+@EnableJpaRepositories("com.skywell.social.repositories")
 public class MainConfig extends WebMvcConfigurerAdapter {
 
 	@Autowired
 	private Environment environment;
+	@Value("classpath:db/account.sql")
+	private Resource accountInit;
+	@Value("classpath:db/data.sql")
+	private Resource dataInit;
+	@Value("classpath:db/jdbcUsersConnectionRepository.sql")
+	private Resource userConnectionInit;
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -76,10 +94,40 @@ public class MainConfig extends WebMvcConfigurerAdapter {
 
 	private DatabasePopulator databasePopulator() {
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.addScript(new ClassPathResource("db/JdbcUsersConnectionRepository.sql", JdbcUsersConnectionRepository.class));
-		populator.addScript(new ClassPathResource("db/account.sql", MainConfig.class));
-		populator.addScript(new ClassPathResource("db/data.sql", MainConfig.class));
+		populator.addScript(userConnectionInit);
+		populator.addScript(accountInit);
+		populator.addScript(dataInit);
 		return populator;
 	}
 
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		em.setDataSource(dataSource());
+		em.setPackagesToScan("com.skywell.social.entity");
+
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		vendorAdapter.setDatabase(Database.valueOf(environment.getProperty("jpa.database")));
+		vendorAdapter.setShowSql(Boolean.parseBoolean(environment.getProperty("jpa.show_sql")));
+
+		em.setJpaVendorAdapter(vendorAdapter);
+
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.dialect", environment.getProperty("jpa.dialect"));
+		properties.setProperty("hibernate.show_sql", environment.getProperty("jpa.show_sql"));
+		properties.setProperty("hibernate.format_sql", environment.getProperty("jpa.format_sql"));
+		properties.setProperty("hibernate.generate_statistics", environment.getProperty("jpa.generate_statistics"));
+		properties.setProperty("hibernate.hbm2ddl.auto", environment.getProperty("jpa.hbm2ddl_auto"));
+
+		em.setJpaProperties(properties);
+
+		return em;
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		return transactionManager;
+	}
 }

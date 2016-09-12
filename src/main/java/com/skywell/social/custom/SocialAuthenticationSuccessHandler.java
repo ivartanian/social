@@ -1,5 +1,9 @@
-package com.skywell.social.temp;
+package com.skywell.social.custom;
 
+import com.skywell.social.entity.User;
+import com.skywell.social.entity.UserAuthentication;
+import com.skywell.social.service.SocialUserService;
+import com.skywell.social.temp.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;

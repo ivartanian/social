@@ -1,4 +1,4 @@
-insert into Account (username, password, firstName, lastName) values ('habuma', 'freebirds', 'Craig', 'Walls');
-insert into Account (username, password, firstName, lastName) values ('kdonald', 'melbourne', 'Keith', 'Donald');
-insert into Account (username, password, firstName, lastName) values ('rclarkson', 'atlanta', 'Roy', 'Clarkson');
+insert into Account (id, username, password, firstName, lastName) values (1, 'habuma', 'freebirds', 'Craig', 'Walls');
+insert into Account (id, username, password, firstName, lastName) values (2, 'kdonald', 'melbourne', 'Keith', 'Donald');
+insert into Account (id, username, password, firstName, lastName) values (3, 'rclarkson', 'atlanta', 'Roy', 'Clarkson');
 

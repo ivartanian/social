@@ -1,5 +1,8 @@
-package com.skywell.social.temp;
+package com.skywell.social.custom;
 
+import com.skywell.social.entity.User;
+import com.skywell.social.repositories.UserRepository;
+import com.skywell.social.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
@@ -9,10 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class AutoSignUpHandler implements ConnectionSignUp {
 
-    @Autowired
-    UserRepository userRepository;
-
+    private final UserRepository userRepository;
     private volatile long userCount;
+
+    @Autowired
+    public AutoSignUpHandler(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional

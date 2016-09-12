@@ -1,4 +1,4 @@
-package com.skywell.social.temp;
+package com.skywell.social.entity;
 
 public enum UserRole {
 	USER, ADMIN;

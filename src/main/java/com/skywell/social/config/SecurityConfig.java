@@ -15,10 +15,13 @@
  */
 package com.skywell.social.config;
 
-import com.skywell.social.custom.SimpleSocialUsersDetailService;
+import com.skywell.social.repositories.UserRepository;
+import com.skywell.social.service.SocialUserService;
+import com.skywell.social.service.SocialUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -39,16 +42,22 @@ import javax.sql.DataSource;
 @EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private DataSource dataSource;
+	private final SocialUserService userService;
 
 	@Autowired
-	public void registerAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-		auth.jdbcAuthentication()
-				.dataSource(dataSource)
-				.usersByUsernameQuery("select username, password, true from Account where username = ?")
-				.authoritiesByUsernameQuery("select username, 'ROLE_USER' from Account where username = ?")
-				.passwordEncoder(passwordEncoder());
+	public SecurityConfig(SocialUserService userService) {
+		this.userService = userService;
+	}
+
+	@Bean
+	@Override
+	protected AuthenticationManager authenticationManager() throws Exception {
+		return super.authenticationManager();
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
 	}
 
 	@Override
@@ -78,11 +87,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 				.apply(
 					new SpringSocialConfigurer());
-	}
-
-	@Bean
-	public SocialUserDetailsService socialUsersDetailService() {
-		return new SimpleSocialUsersDetailService(userDetailsService());
 	}
 
 	@Bean

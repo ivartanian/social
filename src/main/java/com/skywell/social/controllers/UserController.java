@@ -1,5 +1,9 @@
-package com.skywell.social.temp;
+package com.skywell.social.controllers;
 
+import com.skywell.social.entity.User;
+import com.skywell.social.repositories.UserRepository;
+import com.skywell.social.entity.UserAuthentication;
+import com.skywell.social.entity.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

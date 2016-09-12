@@ -1,4 +1,5 @@
-create table Account (id identity,
+DROP TABLE IF EXISTS Account;
+create table Account (id bigint,
 						username varchar unique,
 						password varchar not null,
 						firstName varchar not null, 

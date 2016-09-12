@@ -2,6 +2,7 @@ package com.skywell.social.temp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skywell.social.entity.User;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
