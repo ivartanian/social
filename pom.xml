@@ -133,11 +133,6 @@
         </dependency>
 
         <!-- ========= SPRING SOCIAL ========= -->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.social</groupId>-->
-            <!--<artifactId>spring-social-facebook</artifactId>-->
-            <!--<version>2.0.3.RELEASE</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-core</artifactId>
@@ -157,6 +152,13 @@
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-security</artifactId>
             <version>1.1.4.RELEASE</version>
+        </dependency>
+
+        <!-- ========= SPRING OAUTH2 ========= -->
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>2.0.11.RELEASE</version>
         </dependency>
 
         <!-- ========= SPRING SECURITY ========= -->

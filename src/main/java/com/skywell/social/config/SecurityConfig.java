@@ -15,9 +15,9 @@
  */
 package com.skywell.social.config;
 
+import com.skywell.social.custom.OAuth2AuthenticationProcessingFilter;
 import com.skywell.social.repositories.UserRepository;
 import com.skywell.social.service.SocialUserService;
-import com.skywell.social.service.SocialUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,21 +31,21 @@ import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
-import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.social.security.SpringSocialConfigurer;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private final UserRepository userRepository;
 	private final SocialUserService userService;
 
 	@Autowired
-	public SecurityConfig(SocialUserService userService) {
+	public SecurityConfig(UserRepository userRepository, SocialUserService userService) {
+		this.userRepository = userRepository;
 		this.userService = userService;
 	}
 
@@ -86,7 +86,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.rememberMe()
 			.and()
 				.apply(
-					new SpringSocialConfigurer());
+					new SpringSocialConfigurer())
+		.and()
+				.addFilterBefore(oAuth2AuthenticationProcessingFilter(), AbstractPreAuthenticatedProcessingFilter.class);
+	}
+
+	@Bean
+	public OAuth2AuthenticationProcessingFilter oAuth2AuthenticationProcessingFilter() throws Exception {
+		return new OAuth2AuthenticationProcessingFilter(userRepository, authenticationManager());
 	}
 
 	@Bean

@@ -27,18 +27,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
-	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("signin").setViewName("signin");
-	}
-
-	@Override
-	public void configureViewResolvers(ViewResolverRegistry registry) {
-		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setSuffix(".html");
-		registry.viewResolver(viewResolver);
-	}
-
-	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}

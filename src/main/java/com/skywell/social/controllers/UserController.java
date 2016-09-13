@@ -23,34 +23,8 @@ public class UserController {
 	UserRepository userRepository;
 
 	@RequestMapping(value = "/api/user/current", method = RequestMethod.GET)
-	public User getCurrent() {
-		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication instanceof UserAuthentication) {
-			return ((UserAuthentication) authentication).getDetails();
-		}
-		return new User(); //anonymous user support
-	}
-
-	@RequestMapping(value = "/admin/api/user/{user}/grant/role/{role}", method = RequestMethod.POST)
-	public ResponseEntity<String> grantRole(@PathVariable User user, @PathVariable UserRole role) {
-		if (user == null) {
-			return new ResponseEntity<>("invalid user id", HttpStatus.UNPROCESSABLE_ENTITY);
-		}
-
-		user.grantRole(role);
-		userRepository.saveAndFlush(user);
-		return new ResponseEntity<>("role granted", HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/admin/api/user/{user}/revoke/role/{role}", method = RequestMethod.POST)
-	public ResponseEntity<String> revokeRole(@PathVariable User user, @PathVariable UserRole role) {
-		if (user == null) {
-			return new ResponseEntity<>("invalid user id", HttpStatus.UNPROCESSABLE_ENTITY);
-		}
-
-		user.revokeRole(role);
-		userRepository.saveAndFlush(user);
-		return new ResponseEntity<>("role revoked", HttpStatus.OK);
+	public Object getCurrent() {
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
 	@RequestMapping(value = "/admin/api/user", method = RequestMethod.GET)
